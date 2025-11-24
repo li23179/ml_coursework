@@ -1,1 +1,1 @@
-# insurance_modelling
+# Machine Learning Coursework
