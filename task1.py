@@ -25,7 +25,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 scaler = StandardScaler()
 
 # One-Hot Encoder for categorical features
-encoder = OneHotEncoder(drop="first")
+encoder = OneHotEncoder()
 
 # Combine the preprocessing step
 preprocessor = ColumnTransformer(

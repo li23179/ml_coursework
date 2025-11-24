@@ -28,7 +28,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 scaler = StandardScaler()
 
 # One-Hot Encoder for categorical features
-encoder = OneHotEncoder(drop="first")
+encoder = OneHotEncoder()
 
 # Combine the preprocessing step
 preprocessor = ColumnTransformer(
@@ -123,8 +123,8 @@ with torch.no_grad():
     y_pred_train_tensor = model(X_train_tensor)
     y_pred_test_tensor = model(X_test_tensor)
     
-    train_RMSE = np.sqrt(criterion(y_pred_train_tensor, y_train_tensor))
-    test_RMSE = np.sqrt(criterion(y_pred_test_tensor, y_test_tensor))
+    train_RMSE = np.sqrt(criterion(y_pred_train_tensor, y_train_tensor).item())
+    test_RMSE = np.sqrt(criterion(y_pred_test_tensor, y_test_tensor).item())
     
     train_r2 = r2_score(y_pred_train_tensor, y_train_tensor)
     test_r2 = r2_score(y_pred_test_tensor, y_test_tensor)
