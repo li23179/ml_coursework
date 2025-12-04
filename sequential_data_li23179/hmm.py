@@ -14,6 +14,8 @@ def discretise(series, n_bins):
     return categories, bins
 
 # Supervised learning since latent state is given (i.e. tempeature states)
+# I searched it up, smoothing is the Laplace smoothing, 
+# which enforce no probabilty = 0 in the starting state 
 def hmm_1(temp_states, death_observations, n_states, n_death_levels, smoothing=1.0):
     
     # convert into numpy arrays
@@ -53,6 +55,7 @@ def hmm_1(temp_states, death_observations, n_states, n_death_levels, smoothing=1
         random_state=42,
     )
     
+    # set model params
     model.startprob_ = pi
     model.transmat_ = A
     model.emissionprob_ = E
@@ -113,9 +116,10 @@ def normalised_counts(obs, n_levels):
     counts = np.bincount(obs, minlength=n_levels)
     return counts / counts.sum()
 
-true_freq  = normalised_counts(death_observations, n_death_levels)
-hmm1_freq  = normalised_counts(hmm1_observations, n_death_levels)
-hmm2_freq  = normalised_counts(hmm2_observations, n_death_levels)
+# normalise the counts for frequency plot
+true_freq = normalised_counts(death_observations, n_death_levels)
+hmm1_freq = normalised_counts(hmm1_observations, n_death_levels)
+hmm2_freq = normalised_counts(hmm2_observations, n_death_levels)
 
 # Plot function for the Marginal death distribution
 def plot_freq_bar(true_freq, hmm1_freq, hmm2_freq):
@@ -126,12 +130,16 @@ def plot_freq_bar(true_freq, hmm1_freq, hmm2_freq):
     
     # create a frequency bar plot
     plt.figure()
-    plt.bar(x - width, true_freq,  width, label='Real')
+    # add offset to each bar plot for 3 bars (true, HMM1, HMM2)
+    plt.bar(x - width, true_freq,  width, label='True')
     plt.bar(x,         hmm1_freq, width, label='HMM1')
     plt.bar(x + width, hmm2_freq, width, label='HMM2')
+    
     plt.xticks(x, labels)
     plt.ylabel('Frequency')
+    
     plt.title('Death-Level Distributions: Real vs HMM1 vs HMM2')
+    
     plt.legend()
     plt.tight_layout()
     plt.savefig("sequential_data_figures/hmm_samples_comparison.png", dpi=300, bbox_inches='tight')
@@ -159,20 +167,27 @@ def plot_transition_heatmap(matrix, title, model_name):
     plt.figure()
     plt.imshow(matrix, aspect='equal')
     plt.colorbar(label='Transition probability')
+    
     # Create a 3x3 grid 
     plt.xticks(range(matrix.shape[1]), ['Low', 'Med', 'High'])
     plt.yticks(range(matrix.shape[0]), ['Low', 'Med', 'High'])
+    
+    # label the probabilities
     plt.xlabel('Next death level')
     plt.ylabel('Current death level')
     plt.title(title)
+    
     plt.tight_layout()
     plt.savefig(f"sequential_data_figures/{model_name}_transitions.png", dpi=300, bbox_inches='tight')
     plt.show()
-    
+
+# find the empircal transition matrix first
 true_matrix = empircal_transition_matrix(death_observations, n_death_levels)
 hmm1_matrix = empircal_transition_matrix(hmm1_observations, n_death_levels)
 hmm2_matrix = empircal_transition_matrix(hmm2_observations, n_death_levels)
 
+# use the empircal transition matrix to plot the heatmap of each model to
+# visualise how the order differs from each model to the true one
 plot_transition_heatmap(true_matrix, title="True Observations Transitions", model_name="true")
 plot_transition_heatmap(hmm1_matrix, title="HMM1 Sample Obvservations Transitions", model_name="hmm1")
 plot_transition_heatmap(hmm2_matrix, title="HMM2 Sample Obvservations Transitions", model_name="hmm2")

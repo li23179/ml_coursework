@@ -30,6 +30,7 @@ def load_cifar10(data_dir):
     
     return X_train/255, y_train, X_test/255, y_test 
 
+# define the data directory and the reduced to how many features
 DATA_DIR = "cifar-10-batches-py"
 TARGET_DIM = 200
 
@@ -39,6 +40,7 @@ def pca_reduction(X_train, X_test, target_dim=TARGET_DIM):
     pca = PCA(n_components=target_dim)
     pca.fit(X_train)
     
+    # apply transformation on both training and testing data
     X_train_reduced = pca.transform(X_train)
     X_test_reduced = pca.transform(X_test)
     

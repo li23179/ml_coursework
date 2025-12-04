@@ -97,6 +97,7 @@ for _ in range(num_models):
     # fit the model with sample weight
     model.fit(X_train_sample, y_train_sample, sample_weight=sample_weights[sample_index])
     
+    # find the error by doing 1 - score
     error = 1-model.score(X_train_sample, y_train_sample, sample_weight=sample_weights[sample_index])
     
     # calculate alpha and append it to alphas
@@ -107,6 +108,7 @@ for _ in range(num_models):
     incorrect = model.predict(X_train_sample) != y_train_sample
     sample_weights[sample_index] *= np.exp(alpha*incorrect)
     
+    # normalise the weight, prevent exploding weights
     sample_weights /= np.sum(sample_weights)
     
     models.append(model)

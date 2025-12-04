@@ -88,7 +88,7 @@ classes = [
     "dog", "frog", "horse", "ship", "truck"
 ]
 
-# select the first 5 misclassified test image
+# select the first 5 misclassified test image, similar in task 6
 five_incorrect = incorrect_indices[:5]
 
 fig, ax = plt.subplots(1, 5, figsize=(10, 3))
